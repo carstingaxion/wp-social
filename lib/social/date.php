@@ -13,11 +13,11 @@
 class Social_Date {
 
 	// Second amounts for various time increments
-	const YEAR   = 31556926;
-	const MONTH  = 2629744;
-	const WEEK   = 604800;
-	const DAY    = 86400;
-	const HOUR   = 3600;
+	const YEAR = 31556926;
+	const MONTH = 2629744;
+	const WEEK = 604800;
+	const DAY = 86400;
+	const HOUR = 3600;
 	const MINUTE = 60;
 
 	/**
@@ -34,13 +34,11 @@ class Social_Date {
 	 * @return  string   when only a single output is requested
 	 * @return  array    associative list of all outputs requested
 	 */
-	public static function span($remote, $local = NULL, $output = 'years,months,weeks,days,hours,minutes,seconds')
-	{
+	public static function span($remote, $local = NULL, $output = 'years,months,weeks,days,hours,minutes,seconds') {
 		// Normalize output
-		$output = trim(strtolower( (string) $output));
+		$output = trim(strtolower((string)$output));
 
-		if ( ! $output)
-		{
+		if (!$output) {
 			// Invalid output
 			return FALSE;
 		}
@@ -54,8 +52,7 @@ class Social_Date {
 		// Make the output values into keys
 		extract(array_flip($output), EXTR_SKIP);
 
-		if ($local === NULL)
-		{
+		if ($local === NULL) {
 			// Calculate the span from the current time
 			$local = time();
 		}
@@ -63,50 +60,143 @@ class Social_Date {
 		// Calculate timespan (seconds)
 		$timespan = abs($remote - $local);
 
-		if (isset($output['years']))
-		{
-			$timespan -= self::YEAR * ($output['years'] = (int) floor($timespan / self::YEAR));
+		if (isset($output['years'])) {
+			$timespan -= self::YEAR * ($output['years'] = (int)floor($timespan / self::YEAR));
 		}
 
-		if (isset($output['months']))
-		{
-			$timespan -= self::MONTH * ($output['months'] = (int) floor($timespan / self::MONTH));
+		if (isset($output['months'])) {
+			$timespan -= self::MONTH * ($output['months'] = (int)floor($timespan / self::MONTH));
 		}
 
-		if (isset($output['weeks']))
-		{
-			$timespan -= self::WEEK * ($output['weeks'] = (int) floor($timespan / self::WEEK));
+		if (isset($output['weeks'])) {
+			$timespan -= self::WEEK * ($output['weeks'] = (int)floor($timespan / self::WEEK));
 		}
 
-		if (isset($output['days']))
-		{
-			$timespan -= self::DAY * ($output['days'] = (int) floor($timespan / self::DAY));
+		if (isset($output['days'])) {
+			$timespan -= self::DAY * ($output['days'] = (int)floor($timespan / self::DAY));
 		}
 
-		if (isset($output['hours']))
-		{
-			$timespan -= self::HOUR * ($output['hours'] = (int) floor($timespan / self::HOUR));
+		if (isset($output['hours'])) {
+			$timespan -= self::HOUR * ($output['hours'] = (int)floor($timespan / self::HOUR));
 		}
 
-		if (isset($output['minutes']))
-		{
-			$timespan -= self::MINUTE * ($output['minutes'] = (int) floor($timespan / self::MINUTE));
+		if (isset($output['minutes'])) {
+			$timespan -= self::MINUTE * ($output['minutes'] = (int)floor($timespan / self::MINUTE));
 		}
 
 		// Seconds ago, 1
-		if (isset($output['seconds']))
-		{
+		if (isset($output['seconds'])) {
 			$output['seconds'] = $timespan;
 		}
 
-		if (count($output) === 1)
-		{
+		if (count($output) === 1) {
 			// Only a single output was requested, return it
 			return array_pop($output);
 		}
 
 		// Return array
 		return $output;
+	}
+
+	/**
+	 * Returns a formatted span.
+	 *
+	 * @static
+	 * @param  string  $remote
+	 * @param  string  $local
+	 * @return string
+	 */
+	public static function span_formatted($remote, $local = NULL) {
+		if ($local === NULL) {
+			$local = current_time('timestamp', 1);
+		}
+
+		$span = self::span($remote, $local);
+		$timespan = abs($remote - $local);
+
+		// Years
+		if (!empty($span['years'])) {
+			if ($span['years'] == '1') {
+				return __('1 year', 'social');
+			}
+			else {
+				return sprintf(__('%s years', 'social'), $span['years']);
+			}
+		}
+
+		// Months
+		if (!empty($span['months'])) {
+			if ($span['months'] == '1') {
+				return __('1 month', 'social');
+			}
+			else {
+				return sprintf(__('%s months', 'social'), $span['months']);
+			}
+		}
+
+		// Weeks
+		if (!empty($span['weeks'])) {
+			if ($span['weeks'] == '1') {
+				return __('1 week', 'social');
+			}
+			else {
+				return sprintf(__('%s weeks', $span['weeks']), $span['weeks']);
+			}
+		}
+
+		// Days
+		if (!empty($span['days'])) {
+			if ($span['days'] == '1') {
+				return __('1 day', 'social');
+			}
+			else {
+				return sprintf(__('%s days', 'social'), $span['days']);
+			}
+		}
+
+		// Hours
+		$hours = '';
+		if (!empty($span['hours'])) {
+			if ($span['hours'] == '1') {
+				$hours = __('1 hour', 'social');
+			}
+			else {
+				$hours = sprintf(__('%s hours', 'social'), $span['hours']);
+			}
+		}
+
+		// Minutes
+		$minutes = '';
+		if (!empty($span['minutes'])) {
+			if ($span['minutes'] == '1') {
+				$minutes = __('1 minute', 'social');
+			}
+			else {
+				$minutes = sprintf(__('%s minutes', 'social'), $span['minutes']);
+			}
+		}
+
+		// Seconds
+		if (empty($hours) and empty($minutes)) {
+			if (!empty($span['seconds'])) {
+				if ($span['seconds'] == '1') {
+					return __('1 second', 'social');
+				}
+				else {
+					return sprintf(__('%s seconds', 'social'), $span['seconds']);
+				}
+			}
+		}
+
+		if (!empty($hours) and !empty($minutes)) {
+			return $hours.' '.$minutes;
+		}
+		else if (!empty($hours)) {
+			return $hours;
+		}
+		else {
+			return $minutes;
+		}
 	}
 
 	/**
@@ -124,15 +214,13 @@ class Social_Date {
 	 * @param   integer  "local" timestamp, defaults to time()
 	 * @return  string
 	 */
-	public static function fuzzy_span($timestamp, $local_timestamp = NULL)
-	{
-		$local_timestamp = ($local_timestamp === NULL) ? time() : (int) $local_timestamp;
+	public static function fuzzy_span($timestamp, $local_timestamp = NULL) {
+		$local_timestamp = ($local_timestamp === NULL) ? time() : (int)$local_timestamp;
 
 		// Determine the difference in seconds
 		$offset = abs($local_timestamp - $timestamp);
 
-		if ($offset <= self::MINUTE)
-		{
+		if ($offset <= self::MINUTE) {
 			$span = __('moments', 'social');
 		}
 		elseif ($offset < (self::MINUTE * 20))
@@ -212,8 +300,7 @@ class Social_Date {
 			$span = __('a long time', 'social');
 		}
 
-		if ($timestamp <= $local_timestamp)
-		{
+		if ($timestamp <= $local_timestamp) {
 			// This is in the past
 			return sprintf(__('% ago', 'social'), $span);
 		}
