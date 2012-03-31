@@ -239,11 +239,11 @@ final class Social_Aggregation_Queue {
 	public static function next_run($timetamp) {
 		$current_time = current_time('timestamp', 1);
 		$diff = $timetamp - $current_time;
-		if ($diff < Kohana_Date::HOUR) {
-			$next_run = Kohana_Date::fuzzy_span($timetamp, $current_time);
+		if ($diff < Social_Date::HOUR) {
+			$next_run = Social_Date::fuzzy_span($timetamp, $current_time);
 		}
-		else if ($diff < (Kohana_Date::DAY * 2)) {
-			$span = Kohana_Date::span($timetamp, $current_time);
+		else if ($diff < (Social_Date::DAY * 2)) {
+			$span = Social_Date::span($timetamp, $current_time);
 
 			// Days
 			$days = '';
@@ -303,7 +303,7 @@ final class Social_Aggregation_Queue {
 			$next_run = sprintf(__('approximately %s', 'social'), $next_run);
 		}
 		else {
-			$next_run = Kohana_Date::fuzzy_span($timetamp, $current_time);
+			$next_run = Social_Date::fuzzy_span($timetamp, $current_time);
 		}
 
 		// Things set by Kohana_Date::fuzzy_span()

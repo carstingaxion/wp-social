@@ -1945,6 +1945,10 @@ final class Social {
 		return $url;
 	}
 
+	public static function human_time_diff($timestamp) {
+		$to = time();
+	}
+
 } // End Social
 
 $social_file = __FILE__;
