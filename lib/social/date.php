@@ -200,6 +200,104 @@ class Social_Date {
 	}
 
 	/**
+	 * Returns a formatted span for comments. Uses absolute date after 1 year.
+	 *
+	 * @static
+	 * @param  string  $remote
+	 * @param  string  $local
+	 * @return string
+	 */
+	public static function span_comment($remote, $local = NULL) {
+		if ($local === NULL) {
+			$local = current_time('timestamp', 1);
+		}
+
+		$span = self::span($remote, $local);
+		$timespan = abs($remote - $local);
+
+		// Years
+		if (!empty($span['years'])) {
+			return get_comment_date();
+		}
+
+		// Months
+		if (!empty($span['months'])) {
+			if ($span['months'] == '1') {
+				return __('1 month', 'social');
+			}
+			else {
+				return sprintf(__('%s months', 'social'), $span['months']);
+			}
+		}
+
+		// Weeks
+		if (!empty($span['weeks'])) {
+			if ($span['weeks'] == '1') {
+				return __('1 week', 'social');
+			}
+			else {
+				return sprintf(__('%s weeks', $span['weeks']), $span['weeks']);
+			}
+		}
+
+		// Days
+		if (!empty($span['days'])) {
+			if ($span['days'] == '1') {
+				return __('1 day', 'social');
+			}
+			else {
+				return sprintf(__('%s days', 'social'), $span['days']);
+			}
+		}
+
+		// Hours
+		$hours = '';
+		if (!empty($span['hours'])) {
+			if ($span['hours'] == '1') {
+				$hours = __('1 hour', 'social');
+			}
+			else {
+				$hours = sprintf(__('%s hours', 'social'), $span['hours']);
+			}
+		}
+
+		// Minutes
+		$minutes = '';
+		if (!empty($span['minutes'])) {
+			if ($span['minutes'] == '1') {
+				$minutes = __('1 minute', 'social');
+			}
+			else {
+				$minutes = sprintf(__('%s minutes', 'social'), $span['minutes']);
+			}
+		}
+
+		// Seconds
+		if (empty($hours) and empty($minutes)) {
+			if (!empty($span['seconds'])) {
+				if ($span['seconds'] == '1') {
+					return __('1 second', 'social');
+				}
+				else {
+					return sprintf(__('%s seconds', 'social'), $span['seconds']);
+				}
+			}
+		}
+
+		if (!empty($hours)) {
+			if ($span['hours'] > 1) {
+				return $hours;
+			}
+			else {
+				return $hours.' '.$minutes;
+			}
+		}
+		else {
+			return $minutes;
+		}
+	}
+
+	/**
 	 * Returns the difference between a time and now in a "fuzzy" way.
 	 * Displaying a fuzzy time instead of a date is usually faster to read and understand.
 	 *
